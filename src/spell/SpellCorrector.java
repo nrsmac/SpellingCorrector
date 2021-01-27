@@ -59,8 +59,14 @@ public class SpellCorrector implements ISpellCorrector{
     }
 
     //transposition
-    private void transposition(String string) {
-
+    private void transposition(String string, ArrayList<String> possibilities) {
+            for (int i = 0; i < string.length(); i++) {
+                StringBuilder builder = new StringBuilder(string);
+                builder.deleteCharAt(i).toString();
+                for (int j = 0; j < 26; i++){
+                    builder.a
+                }
+            }
     }
 
     //alteration
