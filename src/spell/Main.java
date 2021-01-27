@@ -13,6 +13,7 @@ public class Main {
 	 * as the second argument.
 	 */
 	public static void main(String[] args) throws IOException {
+
 		
 		String dictionaryFileName = args[0];
 		String inputWord = args[1];
@@ -20,7 +21,7 @@ public class Main {
 		//
         //Create an instance of your corrector here
         //
-		ISpellCorrector corrector = null;
+		ISpellCorrector corrector = new SpellCorrector();
 		
 		corrector.useDictionary(dictionaryFileName);
 		String suggestion = corrector.suggestSimilarWord(inputWord);
