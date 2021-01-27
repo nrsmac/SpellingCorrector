@@ -1,6 +1,7 @@
 package spell;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SpellCorrector implements ISpellCorrector{
@@ -32,11 +33,42 @@ public class SpellCorrector implements ISpellCorrector{
 
      */
 
-        if (dictionary.find(inputWord) != null){ // the exact word is found
+        if (dictionary.equals(inputWord)){ // the exact word is found
             return inputWord;
         }
 
+        //call edit distances
+        ArrayList<String> possibilities1 = new ArrayList<>();
+        ArrayList<String> possibilities2 = new ArrayList<>();
+//        deletion(inputWord, possibilities1); // for distance 2, loop through posibilites
+
+
+        int i = 0;
+
         return null;
     }
+
+    // deletion
+    // get edit distance 1 first!
+    private void deletion(String string, ArrayList<String> possibilities) {
+        for (int i = 0; i < string.length(); i++) {
+            StringBuilder builder = new StringBuilder(string);
+            String s = builder.deleteCharAt(i).toString();
+            possibilities.add(s);
+        }
+    }
+
+    //transposition
+    private void transposition(String string) {
+
+    }
+
+    //alteration
+    private void alteration(String string) {
+        // use a-z
+    }
+
+    //insertion
+    // use a-z
 
 }
