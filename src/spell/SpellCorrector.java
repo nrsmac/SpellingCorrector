@@ -1,6 +1,7 @@
 package spell;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -38,10 +39,19 @@ public class SpellCorrector implements ISpellCorrector{
         }
 
         //call edit distances
-        ArrayList<String> possibilities1 = new ArrayList<>();
-        ArrayList<String> possibilities2 = new ArrayList<>();
-//        deletion(inputWord, possibilities1); // for distance 2, loop through posibilites
+        ArrayList<String> distance1 = new ArrayList<>();
 
+
+        deletion(inputWord, distance1); // for distance 2, loop through posibilites
+        transposition(inputWord, distance1);
+        alteration(inputWord, distance1);
+        insertion(inputWord,distance1);
+
+        ArrayList<String> distance2 = new ArrayList<>(distance1);
+        deletion(inputWord, distance2); // for distance 2, loop through posibilites
+        transposition(inputWord, distance2);
+        alteration(inputWord, distance2);
+        insertion(inputWord,distance2);
 
         int i = 0;
 
@@ -60,21 +70,46 @@ public class SpellCorrector implements ISpellCorrector{
 
     //transposition
     private void transposition(String string, ArrayList<String> possibilities) {
-            for (int i = 0; i < string.length(); i++) {
-                StringBuilder builder = new StringBuilder(string);
-                builder.deleteCharAt(i).toString();
-                for (int j = 0; j < 26; i++){
-                    builder.a
-                }
+        for (int i = 0; i < string.length(); i++) {
+            StringBuilder builder = new StringBuilder(string);
+            char[] stringChars = string.toCharArray();
+            builder.deleteCharAt(i);
+            for (int j = 0; j < stringChars.length; j++) {
+                StringBuilder builder2 = new StringBuilder(builder);
+                String currentChar = stringChars[j] + "";
+                builder2.replace(i, i, currentChar);
+                possibilities.add(builder2.toString());
             }
+        }
     }
 
     //alteration
-    private void alteration(String string) {
-        // use a-z
+    private void alteration(String string, ArrayList<String> possibilities) {
+        for (int i = 0; i < string.length(); i++) {
+            StringBuilder builder = new StringBuilder(string);
+            builder.deleteCharAt(i);
+            for (int j = 0; j < 26; j++) {
+                StringBuilder builder2 = new StringBuilder(builder);
+                String currentChar =  (char)(j+'a') + "";
+                builder2.replace(i, i, currentChar);
+                possibilities.add(builder2.toString());
+            }
+        }
     }
 
     //insertion
     // use a-z
+
+    private void insertion(String string, ArrayList<String> possibilities) {
+        for (int i = 0; i < string.length(); i++) {
+            StringBuilder builder = new StringBuilder(string);
+            for (int j = 0; j < 26; j++) {
+                StringBuilder builder2 = new StringBuilder(builder);
+                String currentChar =  (char)(j+'a') + "";
+                builder2.insert(i, currentChar);
+                possibilities.add(builder2.toString());
+            }
+        }
+    }
 
 }
