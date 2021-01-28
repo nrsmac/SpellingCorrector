@@ -13,7 +13,6 @@ public class Main {
 	 * as the second argument.
 	 */
 	public static void main(String[] args) throws IOException {
-
 		
 		String dictionaryFileName = args[0];
 		String inputWord = args[1];
@@ -25,6 +24,9 @@ public class Main {
 		
 		corrector.useDictionary(dictionaryFileName);
 		String suggestion = corrector.suggestSimilarWord(inputWord);
+
+
+
 		if (suggestion == null) {
 		    suggestion = "No similar word found";
 		}

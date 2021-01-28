@@ -3,7 +3,9 @@ package spell;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
+import java.util.TreeSet;
 
 public class SpellCorrector implements ISpellCorrector{
 
@@ -16,51 +18,76 @@ public class SpellCorrector implements ISpellCorrector{
         Scanner scanner = new Scanner(new File(dictionaryFileName));
         while (scanner.hasNext()) {
             String line = scanner.next();
-            dictionary.add(line);
+            dictionary.add(line.replace("\n", ""));
         }
     }
 
 
     @Override
-    public String suggestSimilarWord(String inputWord) {
-        /*
-    Most similar rules:
-        1. it has the "closest" edit distance from the input string
-        2. If multiple words have the same edit distance,
-            the most similar word is the one with the closest edit distance
-            that is found the most times in the dictionary
-        3. If multiple words are the same edit distance and have the same count/frequency.
-            the most similar word is the one that is first alphabetically
+    public String suggestSimilarWord(String unsignedInputWord) {
 
-     */
+        String inputWord = unsignedInputWord.toLowerCase();
 
-        if (dictionary.equals(inputWord)){ // the exact word is found
+        if (dictionary.find(inputWord) != null){ // the exact word is found
+
             return inputWord;
         }
 
         //call edit distances
-        ArrayList<String> distance1 = new ArrayList<>();
-
+        TreeSet<String> distance1 = new TreeSet<>();
 
         deletion(inputWord, distance1); // for distance 2, loop through posibilites
         transposition(inputWord, distance1);
         alteration(inputWord, distance1);
         insertion(inputWord,distance1);
 
-        ArrayList<String> distance2 = new ArrayList<>(distance1);
+        TreeSet<String> distance2 = new TreeSet<>(distance1);
         deletion(inputWord, distance2); // for distance 2, loop through posibilites
         transposition(inputWord, distance2);
         alteration(inputWord, distance2);
         insertion(inputWord,distance2);
 
-        int i = 0;
+        INode node = dictionary.find("yea");
+
+        distance1.removeIf(s -> dictionary.find(s+"") == null);
+        distance2.removeIf(s -> dictionary.find(s+"") == null);
+
+        boolean bool = distance1.contains(inputWord);
+
+        // just one distance 1 word
+        if (distance1.size() == 1) {
+            return distance1.iterator().next();
+        }
+
+        if (distance1.size() > 1){
+            ArrayList<String> dis1words = new ArrayList<>(distance1);
+            for (String s : dis1words) {
+                if (dictionary.find(s).getValue() == dictionary.getHighestWordCount()){
+                    dis1words.add(s);
+                }
+            }
+
+            if (dis1words.size() == 1) {
+                return dis1words.get(0);
+            }
+
+            Collections.sort(dis1words);
+            return dis1words.get(0);
+        }
+
+
+
+        if (distance2.contains(inputWord)){
+            return null;
+        }
+
 
         return null;
     }
 
     // deletion
     // get edit distance 1 first!
-    private void deletion(String string, ArrayList<String> possibilities) {
+    private void deletion(String string, TreeSet<String> possibilities) {
         for (int i = 0; i < string.length(); i++) {
             StringBuilder builder = new StringBuilder(string);
             String s = builder.deleteCharAt(i).toString();
@@ -69,7 +96,7 @@ public class SpellCorrector implements ISpellCorrector{
     }
 
     //transposition
-    private void transposition(String string, ArrayList<String> possibilities) {
+    private void transposition(String string, TreeSet<String> possibilities) {
         for (int i = 0; i < string.length(); i++) {
             StringBuilder builder = new StringBuilder(string);
             char[] stringChars = string.toCharArray();
@@ -79,12 +106,16 @@ public class SpellCorrector implements ISpellCorrector{
                 String currentChar = stringChars[j] + "";
                 builder2.replace(i, i, currentChar);
                 possibilities.add(builder2.toString());
+
+
+
+
+                }
             }
-        }
     }
 
     //alteration
-    private void alteration(String string, ArrayList<String> possibilities) {
+    private void alteration(String string, TreeSet<String> possibilities) {
         for (int i = 0; i < string.length(); i++) {
             StringBuilder builder = new StringBuilder(string);
             builder.deleteCharAt(i);
@@ -100,12 +131,12 @@ public class SpellCorrector implements ISpellCorrector{
     //insertion
     // use a-z
 
-    private void insertion(String string, ArrayList<String> possibilities) {
-        for (int i = 0; i < string.length(); i++) {
+    private void insertion(String string, TreeSet<String> possibilities) {
+        for (int i = 0; i < string.length() + 1; i++) {
             StringBuilder builder = new StringBuilder(string);
             for (int j = 0; j < 26; j++) {
                 StringBuilder builder2 = new StringBuilder(builder);
-                String currentChar =  (char)(j+'a') + "";
+                char currentChar =  (char)(j+'a');
                 builder2.insert(i, currentChar);
                 possibilities.add(builder2.toString());
             }

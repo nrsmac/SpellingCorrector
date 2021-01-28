@@ -10,11 +10,12 @@ public class Trie implements ITrie{
     int nodeCount;
     int hashCode;
 
+    int highestWordCount;
+
     public Trie() {
         wordCount = 0;
         nodeCount = 1;
         hashCode = 0;
-
         root = new TrieNode();
     }
 
@@ -35,6 +36,9 @@ public class Trie implements ITrie{
         if(string.length() == 0){
             if(node.getValue() == 0){
                 wordCount++;
+                if (highestWordCount < wordCount) {
+                    highestWordCount = wordCount;
+                }
             }
 
             node.incrementValue();
@@ -56,12 +60,13 @@ public class Trie implements ITrie{
     }
 
 
+    public int getHighestWordCount() {
+        return highestWordCount;
+    }
+
     @Override
     public INode find(String word) {
         String w = word.toLowerCase();
-
-        // consider edge cases here
-        //
 
         TrieNode currNode = this.root;
 
@@ -72,8 +77,8 @@ public class Trie implements ITrie{
                     return currNode;
                 }
             }
-
         }
+
         return null;
     }
 
